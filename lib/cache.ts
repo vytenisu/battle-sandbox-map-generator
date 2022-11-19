@@ -11,12 +11,15 @@ export const getMap = (config: IRoomGenerationProps): Promise<IFeed | null> =>
       generate(config)
     }
 
+    const resultMap = map
     map = null
-    resolve(map)
+    resolve(resultMap)
 
-    if (!map) {
-      generate(config)
-    }
+    setTimeout(() => {
+      if (!map) {
+        generate(config)
+      }
+    })
   })
 
 const generate = (config: IRoomGenerationProps) => {

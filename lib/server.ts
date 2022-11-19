@@ -85,7 +85,7 @@ const handleMessage = async (json: string, connection: connection) => {
 }
 
 const allowed = (req: request) => {
-  if (req.origin !== '127.0.0.1') {
+  if (!req.origin.includes('127.0.0.1') && !req.origin.includes('localhost')) {
     return false
   } else {
     return true
