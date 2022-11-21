@@ -6,7 +6,7 @@ export type IObject = ICreep & {objectType: EObjectType}
 
 export type ICreep = Pick<
   Creep,
-  'id' | 'my' | 'pos' | 'body' | 'hitsMax' | 'hits'
+  'id' | 'my' | 'pos' | 'body' | 'hitsMax' | 'hits' | 'fatigue' | 'ticksToLive'
 > & {
   objectType: EObjectType.CREEP
 }

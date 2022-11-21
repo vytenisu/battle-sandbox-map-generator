@@ -1,6 +1,6 @@
 import {times} from './utils/loops'
 import {IPosition} from './types/common'
-import {BODY_PART_MAX_HITS} from './constants/screeps'
+import {BODY_PART_MAX_HITS, CREEP_LIFE_TIME} from './constants/screeps'
 import {IRoom, ITerrainMap} from './types/feed'
 import {EObjectType, IObject, ITerrainMask} from './types/simplified-screeps'
 import {Position} from './utils/position'
@@ -361,18 +361,21 @@ const generateCreep = (
     }
   }
 
-  return [
-    ...objects,
-    {
-      id,
-      objectType: EObjectType.CREEP,
-      my,
-      pos,
-      body,
-      hitsMax,
-      hits,
-    } as IObject,
-  ]
+  const ticksToLive = Random.getInteger(1, CREEP_LIFE_TIME)
+
+  const newCreep: IObject = {
+    id: id as Id<Creep>,
+    objectType: EObjectType.CREEP,
+    my,
+    pos: pos as RoomPosition,
+    body,
+    hitsMax,
+    hits,
+    fatigue: 0,
+    ticksToLive,
+  }
+
+  return [...objects, newCreep]
 }
 
 const getRandomPosition = (
