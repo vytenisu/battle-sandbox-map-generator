@@ -347,9 +347,12 @@ const generateCreep = (
   }
 
   const hitsMax = body.length * BODY_PART_MAX_HITS
-  const hits = Random.getInteger(1, hitsMax)
+  const hits = Random.getInteger(
+    Random.getInteger(Random.getInteger(1, hitsMax), hitsMax),
+    hitsMax,
+  )
 
-  let remainingHits = hits
+  let remainingHits = hitsMax - hits
 
   for (let i = body.length - 1; i >= 0; i--) {
     if (remainingHits > body[i].hits) {

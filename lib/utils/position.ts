@@ -14,6 +14,14 @@ export class Position {
     return {x, y}
   }
 
+  public static near(a: IPosition, b: IPosition): boolean {
+    return Boolean(
+      Math.abs(a.x - b.x) <= 1 &&
+        Math.abs(a.y - b.y) <= 1 &&
+        !Position.equal(a, b),
+    )
+  }
+
   public static equal(...positions: IPosition[]): boolean {
     const hashes = positions.map(pos => Position.hash(pos))
     return Boolean(hashes.every(hash => hash === hashes[0]))
