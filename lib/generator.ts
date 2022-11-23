@@ -1,10 +1,11 @@
 import {times} from './utils/loops'
 import {IPosition} from './types/common'
 import {BODY_PART_MAX_HITS, CREEP_LIFE_TIME} from './constants/screeps'
-import {IRoom, ITerrainMap} from './types/feed'
+import {IFeed, IRoom, ITerrainMap} from './types/feed'
 import {EObjectType, IObject, ITerrainMask} from './types/simplified-screeps'
 import {Position} from './utils/position'
 import {Random} from './utils/random'
+import {getCreepByPosition, getMyCreeps, isWall} from './utils/map'
 
 export interface IRoomGenerationProps {
   room: IRoom
@@ -136,11 +137,12 @@ const generateCreeps = (
   let result = objects
 
   times(ownAmount, i => {
-    result = generateCreep(`cm${i}`, true, room, result, terrain)
+    result = generateCreep(`cm${i}`, true, room, result, terrain, false)
   })
 
   times(enemyAmount, i => {
-    result = generateCreep(`cr${i}`, false, room, result, terrain)
+    // TODO: make nearby creep behavior configurable
+    result = generateCreep(`cr${i}`, false, room, result, terrain, i === 0)
   })
 
   return result
@@ -322,8 +324,27 @@ const generateCreep = (
   room: IRoom,
   objects: IObject[],
   terrain: ITerrainMap,
+  nearMyCreep: boolean,
 ): IObject[] => {
-  const pos = getRandomPosition(room, objects, terrain, true)
+  let pos: IPosition
+
+  if (!nearMyCreep) {
+    pos = getRandomPosition(room, objects, terrain, true)
+  } else {
+    const myCreeps = getMyCreeps({objects} as IFeed)
+
+    const nearPositions = myCreeps
+      .flatMap(creep => Position.getNearPositions(creep.pos, room))
+      .filter(pos => !getCreepByPosition(pos, {objects} as IFeed))
+      .filter(pos => !isWall(pos, {terrain} as IFeed))
+
+    if (nearPositions.length) {
+      pos = Random.getArrayItem(nearPositions)
+    } else {
+      pos = getRandomPosition(room, objects, terrain, true)
+    }
+  }
+
   const body: BodyPartDefinition[] = []
 
   const availableBodyParts: BodyPartDefinition[] = [

@@ -1,3 +1,4 @@
+import {IRoom} from './../types/feed'
 import {IPosition} from '../types/common'
 
 export class Position {
@@ -31,6 +32,24 @@ export class Position {
     return Boolean(
       (Math.abs(a.x - b.x) === 1 && a.y - b.y === 0) ||
         (a.x - b.x === 0 && Math.abs(a.y - b.y) === 1),
+    )
+  }
+
+  public static getNearPositions({x, y}: IPosition, room: IRoom) {
+    const potentialPositions = [
+      {x: x, y: y - 1},
+      {x: x + 1, y: y - 1},
+      {x: x + 1, y},
+      {x: x + 1, y: y + 1},
+      {x: x, y: y + 1},
+      {x: x - 1, y: y + 1},
+      {x: x - 1, y},
+      {x: x - 1, y: y - 1},
+    ]
+
+    return potentialPositions.filter(
+      pos =>
+        pos.x >= 0 && pos.y >= 0 && pos.x < room.width && pos.y < room.height,
     )
   }
 }
