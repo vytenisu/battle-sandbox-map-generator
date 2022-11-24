@@ -141,7 +141,6 @@ const generateCreeps = (
   })
 
   times(enemyAmount, i => {
-    // TODO: make nearby creep behavior configurable
     result = generateCreep(`cr${i}`, false, room, result, terrain, i === 0)
   })
 
